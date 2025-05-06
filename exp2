@@ -1,0 +1,64 @@
+//AIM:-  Write a program to perform encrypation and decryption using the following using 
+the following algorithm Ceaser Cipher, Substitution Cipher  
+
+#include<stdio.h>         // Includes standard input/output library
+#include<ctype.h>         // Includes character type functions
+
+int main() 
+{ 
+    char text[500], ch;   // Declare character array for message and a variable to hold each character
+    int key;              // Declare integer for encryption/decryption key
+
+    printf("Enter a message to encrypt: ");  // Prompt user for input
+    scanf("%s", text);                       // Read input message (no spaces)
+
+    printf("Enter the key: ");               // Prompt user for key
+    scanf("%d", &key);                       // Read key from user
+
+    // Encryption process
+    for (int i = 0; text[i] != '\0'; ++i) {  // Loop through each character until end of string
+        ch = text[i];                        // Get current character
+        if (isalnum(ch)) {                   // Check if character is alphanumeric
+            if (islower(ch)) {               // If lowercase letter
+                ch = (ch - 'a' + key) % 26 + 'a';  // Shift character forward by key
+            } 
+            if (isupper(ch)) {               // If uppercase letter
+                ch = (ch - 'A' + key) % 26 + 'A';  // Shift character forward by key
+            } 
+            if (isdigit(ch)) {               // If digit
+                ch = (ch - '0' + key) % 10 + '0';  // Shift digit forward by key
+            } 
+        } 
+        else { 
+            printf("Invalid Message");       // Print warning for non-alphanumeric character
+        } 
+        text[i] = ch;                        // Replace original character with encrypted character
+    } 
+
+    printf("Encrypted message: %s\n", text); // Print the encrypted message
+
+    // Decryption process
+    for (int i = 0; text[i] != '\0'; ++i) {  // Loop through each encrypted character
+        ch = text[i];                        // Get current character
+        if (isalnum(ch)) {                   // Check if character is alphanumeric
+            if (islower(ch)) {               // If lowercase letter
+                ch = (ch - 'a' - key + 26) % 26 + 'a';  // Shift character back by key
+            } 
+            if (isupper(ch)) {               // If uppercase letter
+                ch = (ch - 'A' - key + 26) % 26 + 'A';  // Shift character back by key
+            } 
+            if (isdigit(ch)) {               // If digit
+                ch = (ch - '0' - key + 10) % 10 + '0';  // Shift digit back by key
+            } 
+        } 
+        else { 
+            printf("Invalid Message");       // Print warning for non-alphanumeric character
+        } 
+        text[i] = ch;                        // Replace encrypted character with decrypted character
+    } 
+
+    printf("After entering valid key\n ");   
+    printf("Decrypted message: %s", text);   // Print the decrypted message
+
+    return 0;                                // End of program
+} 
