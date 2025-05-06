@@ -1,0 +1,36 @@
+//default password
+#include <stdio.h> 
+#include <string.h> 
+int main() { 
+char default_password[100] = "admin"; 
+printf("default_Password: %s\n", default_password); 
+return 0; 
+}
+
+
+//C prog for printed password
+#include <stdio.h> 
+#include <string.h> 
+int main(void) { 
+char password[100]; 
+printf("Enter your password: "); 
+scanf("%s", password); 
+printf("Your password is: %s\n", password); 
+return 0; 
+}
+
+// Password transmitted in plain text 
+#include <stdio.h> 
+#include <string.h> 
+int main() { 
+char password[100]; 
+printf("Enter password: ");
+scanf("%s", password); 
+printf("Password entered: %s\n", password); 
+return 0; 
+} 
+
+
+
+
+
