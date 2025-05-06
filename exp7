@@ -2,75 +2,79 @@
 
 
 
-#include <stdio.h>      // Standard input/output library
-#include <stdlib.h>     // Standard library (not used in this code but included)
-#include <math.h>       // Math library (also not used here, but could be used for advanced math)
+#include <stdio.h>      // Standard I/O functions
+#include <stdlib.h>     // Standard library (for memory, conversions, etc.)
+#include <math.h>       // Math functions (not used here but commonly included)
 
-// Function to compute greatest common divisor using Euclidean algorithm
+// Function to compute greatest common divisor (GCD) using Euclidean algorithm
 int gcd(int a, int b) {
-    while (b != 0) {            // Repeat until remainder becomes zero
-        int temp = b;           // Store current b in temp
-        b = a % b;              // Compute remainder of a divided by b
-        a = temp;               // Update a to previous b
+    while (b != 0) {            // Continue until remainder becomes 0
+        int temp = b;           // Store current value of b
+        b = a % b;              // Compute a mod b
+        a = temp;               // Update a to previous value of b
     }
     return a;                   // GCD is the last non-zero remainder
 }
 
-// Function to compute modular inverse of e modulo phi
+// Function to find modular inverse of e mod phi (for private key d)
 int modInverse(int e, int phi) {
-    for (int d = 1; d < phi; d++) {             // Try all values for d from 1 to phi
-        if ((e * d) % phi == 1) {               // If (e * d) mod phi = 1, d is inverse
-            return d;                           // Return d as private key
+    for (int d = 1; d < phi; d++) {         // Try values from 1 to phi
+        if ((e * d) % phi == 1) {           // Check if (e * d) mod phi == 1
+            return d;                       // Return d as the modular inverse
         }
     }
-    return -1;                                  // If no inverse found, return -1
+    return -1;                              // Return -1 if no inverse found
 }
 
-// Function to perform modular exponentiation (base^exp) % mod
+// Function to compute (base^exp) % mod efficiently
 long long int powerMod(long long int base, long long int exp, long long int mod) {
-    long long int result = 1;       // Initialize result to 1
-    base = base % mod;              // Take mod of base first
+    long long int result = 1;              // Initialize result to 1
+    base = base % mod;                     // Reduce base modulo mod
 
-    while (exp > 0) {               // Repeat while exponent is greater than 0
-        if (exp % 2 == 1) {         // If exponent is odd
-            result = (result * base) % mod;  // Multiply result by base mod
+    while (exp > 0) {                      // Repeat while exponent is > 0
+        if (exp % 2 == 1) {                // If exponent is odd
+            result = (result * base) % mod;  // Multiply result with base
         }
-        exp = exp >> 1;             // Divide exponent by 2 (bit shift right)
-        base = (base * base) % mod; // Square the base and take mod
+        exp = exp >> 1;                    // Divide exponent by 2
+        base = (base * base) % mod;        // Square the base
     }
 
-    return result;                  // Return final result
+    return result;                         // Return final result
 }
 
 int main() {
-    // Choose two prime numbers
-    int p = 61, q = 53;             // These are your chosen prime numbers
-    int n = p * q;                  // n = p × q (part of public and private keys)
-    int phi = (p - 1) * (q - 1);    // Compute Euler’s totient function
+    // Choose two prime numbers (these are hardcoded)
+    int p = 61, q = 53;                    // Example prime numbers
+    int n = p * q;                         // Compute n = p × q
+    int phi = (p - 1) * (q - 1);           // Compute phi = (p−1) × (q−1)
 
-    // Choose public key e such that 1 < e < phi and gcd(e, phi) = 1
+    // Choose public exponent e such that 1 < e < phi and gcd(e, phi) = 1
     int e;
-    for (e = 2; e < phi; e++) {     // Loop to find first valid e
-        if (gcd(e, phi) == 1) {     // Check if e is coprime with phi
-            break;                  // Stop when a valid e is found
+    for (e = 2; e < phi; e++) {            // Try values starting from 2
+        if (gcd(e, phi) == 1) {            // Ensure e is coprime with phi
+            break;                         // Stop when a valid e is found
         }
     }
 
-    // Compute private key d such that (e * d) % phi = 1
-    int d = modInverse(e, phi);     // Compute modular inverse of e
+    // Compute private key d (modular inverse of e mod phi)
+    int d = modInverse(e, phi);            // Calculate private key d
 
     // Display public and private keys
-    printf("Public Key: (%d, %d)\n", e, n);   // (e, n) is the public key
-    printf("Private Key: (%d, %d)\n", d, n);  // (d, n) is the private key
+    printf("Public Key: (%d, %d)\n", e, n);    // (e, n) is public key
+    printf("Private Key: (%d, %d)\n", d, n);   // (d, n) is private key
 
-    // Encryption process
-    int plaintext = 89;                             // Message to encrypt
-    long long int ciphertext = powerMod(plaintext, e, n);  // Encrypt message: c = m^e % n
-    printf("Encrypted Message: %lld\n", ciphertext);       // Display ciphertext
+    // Ask user to input a numeric message
+    int plaintext;
+    printf("Enter a numeric message to encrypt: ");  // Prompt for message
+    scanf("%d", &plaintext);                         // Read message from user
 
-    // Decryption process
-    long long int decryptedMessage = powerMod(ciphertext, d, n);  // Decrypt message: m = c^d % n
-    printf("Decrypted Message: %lld\n", decryptedMessage);        // Display original message
+    // Encrypt the plaintext using public key: ciphertext = plaintext^e mod n
+    long long int ciphertext = powerMod(plaintext, e, n);
+    printf("Encrypted Message: %lld\n", ciphertext);  // Print encrypted result
+
+    // Decrypt the ciphertext using private key: decrypted = ciphertext^d mod n
+    long long int decryptedMessage = powerMod(ciphertext, d, n);
+    printf("Decrypted Message: %lld\n", decryptedMessage);  // Print original message
 
     return 0;  // End of program
 }
